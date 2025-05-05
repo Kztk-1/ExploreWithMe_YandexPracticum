@@ -19,6 +19,7 @@ import ru.yandex.practicum.explore_with_me.feature.user.repository.UserRepositor
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -105,6 +106,34 @@ public class UserServiceImplTest {
     }
 
     @Test
+    void getUser_shouldReturnUser() {
+        //1
+        String name1 = "name1", name2 = "name2", name3 = "name3";
+        String email1 = "email1", email2 = "email2", email3 = "email3";
+        NewUserRequest request1 = new NewUserRequest(name1, email1);
+        NewUserRequest request2 = new NewUserRequest(name2, email2);
+        NewUserRequest request3 = new NewUserRequest(name3, email3);
+
+        //2
+        UserDto createdUser1 = userService.createUser(request1);
+        UserDto createdUser2 = userService.createUser(request2);
+        UserDto createdUser3 = userService.createUser(request3);
+        //2.1
+        Optional<User> gotUser1 = userService.getUser(createdUser1.getId());
+        Optional<User> gotUser2 = userService.getUser(createdUser3.getId() + 1); //Wrong id!!!
+        Optional<User> gotUser3 = userService.getUser(createdUser3.getId());
+
+        //3.1
+        assertThat(gotUser1).isPresent();
+        assertThat(gotUser1.get().getId()).isEqualTo(createdUser1.getId());
+        //3.2
+        assertThat(gotUser2).isEmpty();
+        //3.3
+        assertThat(gotUser3).isPresent();
+        assertThat(gotUser3.get().getId()).isEqualTo(createdUser3.getId());
+    }
+
+    @Test
     void deleteUser_shouldDeleteUser() {
         //1
         String name1 = "name1", name2 = "name2", name3 = "name3";
@@ -133,37 +162,5 @@ public class UserServiceImplTest {
                 .extracting(UserDto::getId)
                 .containsExactlyInAnyOrder(createdUser1.getId(), createdUser3.getId());
     }
-
-
-
-    /*
-    @Override
-    @Transactional
-    public UserDto createUser(NewUserRequest newUserRequest) {
-        try {
-            User user = userMapper.toEntity(newUserRequest);
-            User savedUser = userRepository.save(user);
-            return userMapper.toDto(savedUser);
-        } catch (DataIntegrityViolationException e) {
-            throw new ConflictException("Email already exists");
-        }
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<UserDto> getUsers(List<Long> ids, Pageable pageable) {
-        Page<User> usersPage;
-
-        if (ids != null && !ids.isEmpty()) {
-            usersPage = userRepository.findAllByIdIn(ids, pageable);
-        } else {
-            usersPage = userRepository.findAll(pageable);
-        }
-
-        return usersPage.stream()
-                .map(userMapper::toDto)
-                .collect(Collectors.toList());
-    }
-     */
 
 }
