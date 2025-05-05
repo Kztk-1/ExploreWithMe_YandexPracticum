@@ -8,10 +8,13 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.explore_with_me.feature.user.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> findAllByIdIn(List<Long> ids, Pageable pageable);
+
+    Optional<User> findById(Long id);
 
 }
