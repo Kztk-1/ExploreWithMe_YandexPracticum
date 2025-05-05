@@ -1,0 +1,7 @@
+USE explore_db;
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+TRUNCATE TABLE users;
+
+SET FOREIGN_KEY_CHECKS = 1;
