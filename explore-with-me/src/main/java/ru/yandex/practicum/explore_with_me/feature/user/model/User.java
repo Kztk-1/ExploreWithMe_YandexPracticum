@@ -22,4 +22,12 @@ public class User {
 
     @Column(unique = true, nullable = false, length = Config.USER_EMAIL_MAX_LENGTH)
     private String email;
+
+    @Column(name = "registration_date", nullable = false)
+    private LocalDateTime registrationDate;
+
+    @PrePersist
+    protected void onCreate() {
+        this.registrationDate = LocalDateTime.now();
+    }
 }

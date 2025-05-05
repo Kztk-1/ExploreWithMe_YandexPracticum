@@ -20,5 +20,7 @@ public class UserDto {
     @Email(message = "Email should be valid")
     @Size(max = 100, message = "Email must be up to 254 characters")
     private String email;
+
+    private LocalDateTime registrationDate;
 }
 
