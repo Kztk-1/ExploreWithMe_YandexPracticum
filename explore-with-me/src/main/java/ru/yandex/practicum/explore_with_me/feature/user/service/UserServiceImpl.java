@@ -16,6 +16,7 @@ import ru.yandex.practicum.explore_with_me.feature.user.model.User;
 import ru.yandex.practicum.explore_with_me.feature.user.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,6 +53,11 @@ public class UserServiceImpl implements UserService {
         return usersPage.stream()
                 .map(userMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<User> getUser(Long id) {
+        return userRepository.findById(id);
     }
 
     @Override
