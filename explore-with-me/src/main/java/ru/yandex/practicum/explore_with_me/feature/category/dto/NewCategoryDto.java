@@ -6,8 +6,10 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
-class NewCategoryDto {
+@Data
+public class NewCategoryDto {
     @NotBlank
     @Size(min = 1, max = 50)
     String name;
