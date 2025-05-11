@@ -1,5 +1,6 @@
 package ru.yandex.practicum.explore_with_me.feature.category.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -9,8 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.yandex.practicum.explore_with_me.feature.category.dto.NewCategoryDto;
+import ru.yandex.practicum.explore_with_me.feature.category.dto.UpdateCategoryDto;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -22,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PublicCategoryControllerIntegrationTest {
 
     private final MockMvc mockMvc;
+    private final ObjectMapper objectMapper;
 
     /**
      * В test-data.sql мы заранее вставили 5 категорий с id=1..5 и именами:
@@ -71,5 +75,41 @@ class PublicCategoryControllerIntegrationTest {
                 .andExpect(jsonPath("$.error").value("Not Found"))
                 .andExpect(jsonPath("$.message")
                         .value("Category with id=" + nonexistentId + " not found"));
+    }
+
+    @Test
+    void addCategory_shouldReturnCreatedCategory() throws Exception {
+        NewCategoryDto dto = new NewCategoryDto();
+        dto.setName("NewCat");
+
+        mockMvc.perform(post("/admin/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.name").value("NewCat"));
+    }
+
+    @Test
+    void updateCategory_shouldUpdateAndReturnDto() throws Exception {
+        UpdateCategoryDto dto = new UpdateCategoryDto();
+        dto.setName("UpdatedCat");
+
+        mockMvc.perform(patch("/admin/categories/{catId}", 3)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(3))
+                .andExpect(jsonPath("$.name").value("UpdatedCat"));
+    }
+
+    @Test
+    void deleteCategory_shouldRemoveCategory() throws Exception {
+        mockMvc.perform(delete("/admin/categories/{catId}", 5))
+                .andExpect(status().isNoContent());
+
+        // Убедимся, что категория действительно удалена
+        mockMvc.perform(get("/categories/{id}", 5))
+                .andExpect(status().isNotFound());
     }
 }
