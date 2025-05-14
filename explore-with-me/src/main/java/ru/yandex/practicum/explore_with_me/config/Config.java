@@ -7,4 +7,6 @@ public class Config {
 
     public static final String CONFLICT_EXCEPTION_MESSAGE = "Conflict";
 
+    public static final String CATEGORY_NOTFOUND_EXCEPTION_MESSAGE = "Category with id=%d not found";
+
 }
