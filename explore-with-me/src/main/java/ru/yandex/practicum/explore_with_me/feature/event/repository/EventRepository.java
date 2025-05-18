@@ -6,26 +6,25 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.explore_with_me.feature.event.model.Event;
-import ru.yandex.practicum.explore_with_me.feature.event.model.EventState;
-import ru.yandex.practicum.explore_with_me.feature.user.model.User;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 
+/**
+ * Репозиторий для работы с событиями.
+ */
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
     Page<Event> findByInitiatorId(Long userId, Pageable pageable);
 
-    List<Event> findByIdIn(List<Long> eventIds);
+    /**
+     * Поиск событий пользователя с пагинацией
+     */
+    Page<Event> findByInitiatorId(Long initiatorId, Pageable pageable);
 
-    Page<Event> findByCategoryId(Long catId, Pageable pageable);
-
-    Page<Event> findByEventDateBetweenAndState(
-            LocalDateTime start,
-            LocalDateTime end,
-            EventState state,
-            Pageable pageable
-    );
+    /**
+     * Поиск конкретного события пользователя
+     */
+    Optional<Event> findByIdAndInitiatorId(Long id, Long initiatorId);
 
 }
