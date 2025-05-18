@@ -1,41 +1,83 @@
 package ru.yandex.practicum.explore_with_me.feature.event.service;
 
-import org.springframework.stereotype.Service;
-import ru.yandex.practicum.explore_with_me.feature.event.dto.EventFullDto;
-import ru.yandex.practicum.explore_with_me.feature.event.dto.NewEventDto;
-
+import org.springframework.data.domain.Pageable;
+import ru.yandex.practicum.explore_with_me.feature.event.dto.*;
+import java.time.LocalDateTime;
 import java.util.List;
-/*
-Следующие шаги
-Реализовать остальные методы сервиса:
 
-Обновление события пользователем и админом.
-
-Поиск событий с фильтрами.
-
-Логика публикации/отмены событий.
-
-Добавить валидацию:
-
-Проверка прав пользователя на изменение события.
-
-Обработка конфликтов (например, попытка изменить опубликованное событие).
-
-Интеграция с ParticipationRequest:
-
-Подтверждение/отклонение заявок.
-
-Обновление confirmedRequests.
-
-Написать тесты:
-
-Unit-тесты для сервисов.
-
-Интеграционные тесты через MockMvc.
- */
 public interface EventService {
 
-    EventFullDto createEvent(Long userId, NewEventDto eventDto);
+    /**
+     * Админ: получение событий по фильтрам и пагинации
+     */
+    List<EventFullDto> getEventsAdmin(
+            List<Long> users,
+            List<String> states,
+            List<Long> categories,
+            LocalDateTime rangeStart,
+            LocalDateTime rangeEnd,
+            Pageable pageable
+    );
 
-    List<EventFullDto> getEventsByUserId(Long userId);
+    /**
+     * Админ: обновление события
+     */
+    EventFullDto updateEventAdmin(
+            Long eventId,
+            UpdateEventAdminRequest updateRequest
+    );
+
+    /**
+     * Публично: поиск событий по фильтрам и пагинации
+     */
+    List<EventShortDto> getPublicEvents(
+            String text,
+            List<Long> categories,
+            Boolean paid,
+            LocalDateTime rangeStart,
+            LocalDateTime rangeEnd,
+            Boolean onlyAvailable,
+            String sort,
+            Pageable pageable
+    );
+
+    /**
+     * Публично: получение события по ID
+     */
+    EventFullDto getEventById(
+            Long eventId
+    );
+
+    /**
+     * Пользователь: создание нового события
+     */
+    EventFullDto createEvent(
+            Long userId,
+            NewEventDto newEventDto
+    );
+
+    /**
+     * Пользователь: получение списка своих событий с пагинацией
+     */
+    List<EventShortDto> getEventsByUserId(
+            Long userId,
+            Pageable pageable
+    );
+
+    /**
+     * Пользователь: получение своего события по ID
+     */
+    EventFullDto getUserEventById(
+            Long userId,
+            Long eventId
+    );
+
+    /**
+     * Пользователь: обновление своего события
+     */
+    EventFullDto updateEventByUser(
+            Long userId,
+            Long eventId,
+            UpdateEventUserRequest updateRequest
+    );
 }
