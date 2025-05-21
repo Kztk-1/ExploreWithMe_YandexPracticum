@@ -2,6 +2,8 @@ package ru.yandex.practicum.explore_with_me.feature.event.service;
 
 import org.springframework.data.domain.Pageable;
 import ru.yandex.practicum.explore_with_me.feature.event.dto.*;
+import ru.yandex.practicum.explore_with_me.feature.event.model.EventState;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -12,7 +14,7 @@ public interface EventService {
      */
     List<EventFullDto> getEventsAdmin(
             List<Long> users,
-            List<String> states,
+            List<EventState> states,
             List<Long> categories,
             LocalDateTime rangeStart,
             LocalDateTime rangeEnd,
