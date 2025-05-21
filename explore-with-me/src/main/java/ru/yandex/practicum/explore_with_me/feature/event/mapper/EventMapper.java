@@ -13,7 +13,10 @@ import ru.yandex.practicum.explore_with_me.feature.user.mapper.UserMapper;
 public interface EventMapper {
 public abstract class EventMapper {
 
-    EventFullDto toDto(Event event);
+    @Autowired
+    protected CategoryRepository categoryRepository;
+
+    EventMapper INSTANCE = Mappers.getMapper(EventMapper.class);
 
     // ВАЖНО!!! Category и Initiator будем делать в сервисе!!!
     @Mapping(target = "category", ignore = true)
@@ -21,3 +24,8 @@ public abstract class EventMapper {
     @Mapping(target = "paid", source = "paid")
     Event toEntity(NewEventDto dto);
 }
+    protected Category fetchCategory(Integer id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Category n found (1)"));
+        return category;
+    }
