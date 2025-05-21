@@ -20,12 +20,23 @@ public abstract class EventMapper {
 
     // ВАЖНО!!! Category и Initiator будем делать в сервисе!!!
     @Mapping(target = "category", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "category", expression = "java(fetchCategory(eventDto.getCategoryId()))")
+    @Mapping(target = "state", constant = "PENDING")
     @Mapping(target = "initiator", ignore = true)
     @Mapping(target = "paid", source = "paid")
     Event toEntity(NewEventDto dto);
 }
+    @Mapping(target = "createdOn", ignore = true)
+    @Mapping(target = "publishedOn", ignore = true)
+    @Mapping(target = "confirmedRequests", ignore = true)
+    @Mapping(target = "views", ignore = true)
+    public abstract Event fromNewEventDto(NewEventDto eventDto);
     protected Category fetchCategory(Integer id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Category n found (1)"));
         return category;
     }
+
+
+}
