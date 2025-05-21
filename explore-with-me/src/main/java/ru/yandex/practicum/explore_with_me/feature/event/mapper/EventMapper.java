@@ -38,9 +38,6 @@ public abstract class EventMapper {
     @Mapping(target = "category", expression = "java(fetchCategory(eventDto.getCategoryId()))")
     @Mapping(target = "state", constant = "PENDING")
     @Mapping(target = "initiator", ignore = true)
-    @Mapping(target = "paid", source = "paid")
-    Event toEntity(NewEventDto dto);
-}
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "publishedOn", ignore = true)
     @Mapping(target = "confirmedRequests", ignore = true)

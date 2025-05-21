@@ -10,15 +10,7 @@ import ru.yandex.practicum.explore_with_me.feature.event.model.Location;
 import java.time.LocalDateTime;
 
 
-/*
-title
-annotation
-description
-eventDate
-location
-paid
-participantLimit
- */
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -33,7 +25,7 @@ public class NewEventDto {
     private String annotation;
 
     @NotNull
-    private Integer category;
+    private Integer categoryId;
 
     @NotBlank
     @Size(min = 20, max = 7000)
