@@ -26,27 +26,26 @@ public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final EventMapper eventMapper;
     private final UserService userService;
+    private final UserRepository userRepository;
 
     @Override
-    public EventFullDto createEvent(Long userId, NewEventDto eventDto) {
-        Event event = eventMapper.toEntity(eventDto);
     public EventFullDto getEventById(Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event not found: " + eventId));
         return eventMapper.toFullDto(event);
     }
 
-        // 1) initiator
-        User initiator = userService.getUser(userId).orElseThrow();
-        event.setInitiator(initiator);
-        // 2) state
-        event.setState(EventState.PENDING);
-        // 3) category
-        Category category = categoryRepository.getReferenceById(eventDto.getCategory());
-        event.setCategory(category);
+    @Override
+    public EventFullDto createEvent(Long userId, NewEventDto newEventDto) {
+        Event event = eventMapper.fromNewEventDto(newEventDto);
+        User initiator = userRepository.getReferenceById(userId);
 
-        Event savedEvent = eventRepository.save(event);
-        return eventMapper.toDto(savedEvent);
+        event.setInitiator(initiator);
+        event.setCreatedOn(LocalDateTime.now());
+        event.setState(EventState.PENDING);
+
+        Event saved = eventRepository.save(event);
+        return eventMapper.toFullDto(saved);
     }
 
     @Override
