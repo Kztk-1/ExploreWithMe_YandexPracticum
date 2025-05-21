@@ -25,8 +25,35 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final CategoryRepository categoryRepository;
     private final EventMapper eventMapper;
-    private final UserService userService;
     private final UserRepository userRepository;
+
+    @Override
+    public List<EventFullDto> getEventsAdmin(List<Long> users, List<EventState> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable pageable) {
+        // TODO: build specification or criteria query based on filters
+        List<Event> events = findAllByAdminFilters(users, states, categories, rangeStart, rangeEnd, pageable);
+        return events.stream()
+                .map(eventMapper::toFullDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public EventFullDto updateEventAdmin(Long eventId, UpdateEventAdminRequest updateRequest) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+
+        eventMapper.updateFromAdminRequest(updateRequest, event);
+        Event updated = eventRepository.save(event);
+        return eventMapper.toFullDto(updated);
+    }
+
+    @Override
+    public List<EventShortDto> getPublicEvents(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, Pageable pageable) {
+        // TODO: implement filtering, availability and sorting
+        List<Event> events = eventRepository.findPublic(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, pageable);
+        return events.stream()
+                .map(eventMapper::toShortDto)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public EventFullDto getEventById(Long eventId) {
@@ -49,10 +76,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventFullDto> getEventsByUserId(Long userId) {
-        List<Event> result = eventRepository.findAllByInit(userId); //Доделаю
-        return result.stream()
-                .map(eventMapper::toDto)
+    public List<EventShortDto> getEventsByUserId(Long userId, Pageable pageable) {
+        Page<Event> page = eventRepository.findByInitiatorId(userId, pageable);
+        List<Event> events = page.getContent();
+        return events.stream()
+                .map(eventMapper::toShortDto)
                 .collect(Collectors.toList());
     }
 
