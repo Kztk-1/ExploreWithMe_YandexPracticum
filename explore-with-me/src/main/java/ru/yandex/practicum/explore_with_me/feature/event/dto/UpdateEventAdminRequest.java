@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.yandex.practicum.explore_with_me.feature.event.model.Location;
+import ru.yandex.practicum.explore_with_me.feature.event.model.StateAction;
 
 import java.time.LocalDateTime;
 
@@ -50,5 +51,5 @@ public class UpdateEventAdminRequest {
      * например, PUBLISH_EVENT, REJECT_EVENT
      * (только для Admin)
      */
-    private String stateAction;
+    private StateAction stateAction;
 }
