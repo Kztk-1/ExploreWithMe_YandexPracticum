@@ -11,6 +11,7 @@ import ru.yandex.practicum.explore_with_me.feature.user.mapper.UserMapper;
 //        uses = {UserMapper.class, CategoryMapper.class, LocationMapper.class})
         uses = {UserMapper.class})
 public interface EventMapper {
+public abstract class EventMapper {
 
     EventFullDto toDto(Event event);
 
