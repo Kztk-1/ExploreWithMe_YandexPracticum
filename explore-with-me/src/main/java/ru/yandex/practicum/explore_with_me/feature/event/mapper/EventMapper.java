@@ -1,12 +1,18 @@
 package ru.yandex.practicum.explore_with_me.feature.event.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import ru.yandex.practicum.explore_with_me.feature.event.dto.EventFullDto;
-import ru.yandex.practicum.explore_with_me.feature.event.dto.NewEventDto;
+import org.mapstruct.*;
+import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
+import ru.yandex.practicum.explore_with_me.exception.NotFoundException;
 import ru.yandex.practicum.explore_with_me.feature.category.mapper.CategoryMapper;
+import ru.yandex.practicum.explore_with_me.feature.category.model.Category;
+import ru.yandex.practicum.explore_with_me.feature.category.repository.CategoryRepository;
+import ru.yandex.practicum.explore_with_me.feature.event.dto.*;
 import ru.yandex.practicum.explore_with_me.feature.event.model.Event;
 import ru.yandex.practicum.explore_with_me.feature.user.mapper.UserMapper;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Mapper(
         componentModel = "spring",
@@ -26,8 +32,8 @@ public abstract class EventMapper {
 
     EventMapper INSTANCE = Mappers.getMapper(EventMapper.class);
 
-    // ВАЖНО!!! Category и Initiator будем делать в сервисе!!!
-    @Mapping(target = "category", ignore = true)
+    public abstract EventFullDto toFullDto(Event event);
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "category", expression = "java(fetchCategory(eventDto.getCategoryId()))")
     @Mapping(target = "state", constant = "PENDING")
