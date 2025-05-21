@@ -4,13 +4,21 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.yandex.practicum.explore_with_me.feature.event.dto.EventFullDto;
 import ru.yandex.practicum.explore_with_me.feature.event.dto.NewEventDto;
+import ru.yandex.practicum.explore_with_me.feature.category.mapper.CategoryMapper;
 import ru.yandex.practicum.explore_with_me.feature.event.model.Event;
 import ru.yandex.practicum.explore_with_me.feature.user.mapper.UserMapper;
 
-@Mapper(componentModel = "spring",
-//        uses = {UserMapper.class, CategoryMapper.class, LocationMapper.class})
-        uses = {UserMapper.class})
-public interface EventMapper {
+@Mapper(
+        componentModel = "spring",
+        uses = {
+                UserMapper.class,         // будет искать в нём метод map(User → UserShortDto)
+                CategoryMapper.class      // аналогично, для Category → CategoryDto
+        },
+        imports = {
+                DateTimeFormatter.class,
+                LocalDateTime.class
+        }
+)
 public abstract class EventMapper {
 
     @Autowired
