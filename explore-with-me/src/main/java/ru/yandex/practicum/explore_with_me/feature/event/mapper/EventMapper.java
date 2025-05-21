@@ -63,6 +63,17 @@ public abstract class EventMapper {
 
 
 
+    /** Главный метод конвертации в Short DTO */
+    @Mapping(target = "eventDate",
+            expression = "java(event.getEventDate()"
+                    + ".format(DateTimeFormatter.ofPattern(\"yyyy-MM-dd HH:mm:ss\")))")
+    @Mapping(target = "category", source = "category")
+    @Mapping(target = "initiator", source = "initiator")
+    public abstract EventShortDto toShortDto(Event event);
+
+
+
+
     protected Category fetchCategory(Integer id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Category n found (1)"));
