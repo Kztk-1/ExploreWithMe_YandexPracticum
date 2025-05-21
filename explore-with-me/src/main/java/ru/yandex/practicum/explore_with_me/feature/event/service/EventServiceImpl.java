@@ -30,6 +30,11 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventFullDto createEvent(Long userId, NewEventDto eventDto) {
         Event event = eventMapper.toEntity(eventDto);
+    public EventFullDto getEventById(Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event not found: " + eventId));
+        return eventMapper.toFullDto(event);
+    }
 
         // 1) initiator
         User initiator = userService.getUser(userId).orElseThrow();
