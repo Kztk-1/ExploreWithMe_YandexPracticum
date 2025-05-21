@@ -12,13 +12,13 @@ import ru.yandex.practicum.explore_with_me.feature.user.dto.UserShortDto;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventShortDto {
-    private String annotation;
-    private CategoryDto category;
-    private Long confirmedRequests;
-    private String eventDate;
     private Long id;
-    private UserShortDto initiator;
-    private boolean paid;
     private String title;
+    private String annotation;
+    private String eventDate;
+    private CategoryDto category;
+    private UserShortDto initiator;
+    private Boolean paid;
+    private Long confirmedRequests;
     private Long views;
 }
