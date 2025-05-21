@@ -46,6 +46,23 @@ public abstract class EventMapper {
     @Mapping(target = "confirmedRequests", ignore = true)
     @Mapping(target = "views", ignore = true)
     public abstract Event fromNewEventDto(NewEventDto eventDto);
+
+    @BeanMapping(
+            ignoreByDefault = true,
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+    )
+    public abstract Event updateFromUserRequest(UpdateEventUserRequest dto,
+                                                @MappingTarget Event event);
+
+    @BeanMapping(
+            ignoreByDefault = true,
+            nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+    )
+    public abstract Event updateFromAdminRequest(UpdateEventAdminRequest dto,
+                                                 @MappingTarget Event event);
+
+
+
     protected Category fetchCategory(Integer id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Category n found (1)"));
