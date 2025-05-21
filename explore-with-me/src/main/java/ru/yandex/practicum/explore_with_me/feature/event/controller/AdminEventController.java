@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.explore_with_me.feature.event.dto.EventFullDto;
 import ru.yandex.practicum.explore_with_me.feature.event.dto.UpdateEventAdminRequest;
+import ru.yandex.practicum.explore_with_me.feature.event.model.EventState;
 import ru.yandex.practicum.explore_with_me.feature.event.service.EventService;
 
 import java.time.LocalDateTime;
@@ -26,7 +27,7 @@ public class AdminEventController {
     @GetMapping
     public ResponseEntity<List<EventFullDto>> getEvents(
             @RequestParam(required = false) List<Long> users,
-            @RequestParam(required = false) List<String> states,
+            @RequestParam(required = false) List<EventState> states,
             @RequestParam(required = false) List<Long> categories,
             @RequestParam(required = false)
             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
