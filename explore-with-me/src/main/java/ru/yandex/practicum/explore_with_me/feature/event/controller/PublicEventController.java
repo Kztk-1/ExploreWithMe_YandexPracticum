@@ -33,8 +33,9 @@ public class PublicEventController {
             @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size) {
 
-        int page = size / from;
+        int page = (from != 0) ? (size / from) : 0;
         Pageable pageable = PageRequest.of(page, size);
+
         List<EventShortDto> events = eventService.getPublicEvents(
                 text, categories, paid, rangeStart, rangeEnd,
                 onlyAvailable, sort, pageable
