@@ -156,5 +156,11 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
-
+    @Override
+    public EventFullDto getUserEventById(Long userId, Long eventId) {
+        Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
+                .orElseThrow(() -> new NotFoundException(eventId));
+        return eventMapper.toFullDto(event);
+    }
+    
 }
