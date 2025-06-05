@@ -2,6 +2,10 @@ package ru.yandex.practicum.explore_with_me.feature.event.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.explore_with_me.config.Config;
 import ru.yandex.practicum.explore_with_me.exception.ConflictException;
@@ -86,14 +90,41 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventShortDto> getPublicEvents(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, Pageable pageable) {
-        // TODO: implement filtering, availability and sorting
-        return events.stream()
-                .map(eventMapper::toShortDto)
-                .collect(Collectors.toList());
     public List<EventShortDto> getPublicEvents(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, SortType sort, Pageable pageable) {
+        if (sort != null) {
+            Sort sortObj; // Создаем sortObj
+            switch (sort) {
+                case VIEWS -> sortObj = Sort.by(Sort.Direction.DESC, "views");
+                case EVENT_DATE -> sortObj = Sort.by(Sort.Direction.ASC, "event_date");
+                default -> sortObj = Sort.by(Sort.Direction.ASC, "event_date");
+            }
+            // Создаем новый Pageable с сортировкой
+            Pageable sortedPageable = PageRequest.of(
+                    pageable.getPageNumber(),
+                    pageable.getPageSize(),
+                    sortObj
+            );
+            pageable = sortedPageable; // Перезаписываем pageble
+        }
+
         List<Event> events = eventRepository.findPublic(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, pageable)
                 .toList();
+
+        // return
+        if (onlyAvailable) {
+            return events.stream()
+                    /*
+                        Временное решение через .filter(), которое ломает пагинацию
+                        TODO: Сделать нормальным
+                     */
+                    .filter(e -> (e.getParticipantLimit() > e.getConfirmedRequests()))
+                    .map(eventMapper::toShortDto)
+                    .collect(Collectors.toList());
+        } else {
+            return events.stream()
+                    .map(eventMapper::toShortDto)
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override
