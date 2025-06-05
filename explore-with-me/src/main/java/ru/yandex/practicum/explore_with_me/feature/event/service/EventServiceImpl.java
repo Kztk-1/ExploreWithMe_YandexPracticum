@@ -10,6 +10,7 @@ import ru.yandex.practicum.explore_with_me.feature.event.dto.NewEventDto;
 import ru.yandex.practicum.explore_with_me.feature.event.mapper.EventMapper;
 import ru.yandex.practicum.explore_with_me.feature.event.model.Event;
 import ru.yandex.practicum.explore_with_me.feature.event.model.EventState;
+import ru.yandex.practicum.explore_with_me.feature.event.model.SortType;
 import ru.yandex.practicum.explore_with_me.feature.event.repository.EventRepository;
 import ru.yandex.practicum.explore_with_me.feature.user.model.User;
 import ru.yandex.practicum.explore_with_me.feature.user.service.UserService;
@@ -53,6 +54,7 @@ public class EventServiceImpl implements EventService {
         return events.stream()
                 .map(eventMapper::toShortDto)
                 .collect(Collectors.toList());
+    public List<EventShortDto> getPublicEvents(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, SortType sort, Pageable pageable) {
     }
 
     @Override

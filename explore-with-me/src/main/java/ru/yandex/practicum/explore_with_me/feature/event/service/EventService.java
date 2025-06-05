@@ -39,7 +39,7 @@ public interface EventService {
             LocalDateTime rangeStart,
             LocalDateTime rangeEnd,
             Boolean onlyAvailable,
-            String sort,
+            SortType sort,
             Pageable pageable
     );
 

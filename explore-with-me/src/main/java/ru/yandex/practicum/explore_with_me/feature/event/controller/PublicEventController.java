@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.explore_with_me.feature.event.dto.EventFullDto;
 import ru.yandex.practicum.explore_with_me.feature.event.dto.EventShortDto;
+import ru.yandex.practicum.explore_with_me.feature.event.model.SortType;
 import ru.yandex.practicum.explore_with_me.feature.event.service.EventService;
 
 import java.time.LocalDateTime;
@@ -28,7 +29,7 @@ public class PublicEventController {
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
             @RequestParam(defaultValue = "false") Boolean onlyAvailable,
-            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) SortType sort,
             @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size) {
 
