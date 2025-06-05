@@ -1,5 +1,6 @@
 package ru.yandex.practicum.explore_with_me.feature.event.controller;
 
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,8 +39,8 @@ public class PrivateEventController {
     @GetMapping
     public ResponseEntity<List<EventShortDto>> getUserEvents(
             @PathVariable Long userId,
-            @RequestParam(defaultValue = "0") int from,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "0") @Min(0) int from,
+            @RequestParam(defaultValue = "10") @Min(1) int size) {
 
         int page = from / size;
         Pageable pageable = PageRequest.of(page, size);

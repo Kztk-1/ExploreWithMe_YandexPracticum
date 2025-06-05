@@ -1,5 +1,6 @@
 package ru.yandex.practicum.explore_with_me.feature.event.controller;
 
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,8 +31,8 @@ public class PublicEventController {
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
             @RequestParam(defaultValue = "false") Boolean onlyAvailable,
             @RequestParam(required = false) SortType sort,
-            @RequestParam(defaultValue = "0") int from,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "0") @Min(0) int from,
+            @RequestParam(defaultValue = "10") @Min(1) int size) {
 
         int page = (from != 0) ? (size / from) : 0;
         Pageable pageable = PageRequest.of(page, size);
@@ -45,8 +46,8 @@ public class PublicEventController {
 
     @GetMapping("/{id}")
     public List<EventShortDto> getEventById(@PathVariable Long userId,
-                                      @RequestParam(defaultValue = "0") int from,
-                                      @RequestParam(defaultValue = "10") int size) {
+                                      @RequestParam(defaultValue = "0") @Min(0) int from,
+                                      @RequestParam(defaultValue = "10") @Min(1) int size) {
 
         int page = size / from;
         Pageable pageable = PageRequest.of(page, size);
