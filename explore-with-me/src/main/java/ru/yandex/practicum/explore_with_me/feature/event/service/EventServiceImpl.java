@@ -42,7 +42,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public EventFullDto updateEventAdmin(Long eventId, UpdateEventAdminRequest updateRequest) {
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
+                .orElseThrow(() -> new NotFoundException(eventId));
 
         // Обработка
         eventMapper.updateFromAdminRequest(updateRequest, event);
