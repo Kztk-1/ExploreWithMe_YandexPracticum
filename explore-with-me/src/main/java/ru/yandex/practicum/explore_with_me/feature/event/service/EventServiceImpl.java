@@ -7,6 +7,8 @@ import ru.yandex.practicum.explore_with_me.feature.category.model.Category;
 import ru.yandex.practicum.explore_with_me.feature.category.repository.CategoryRepository;
 import ru.yandex.practicum.explore_with_me.feature.event.dto.EventFullDto;
 import ru.yandex.practicum.explore_with_me.feature.event.dto.NewEventDto;
+import ru.yandex.practicum.explore_with_me.config.Config;
+import ru.yandex.practicum.explore_with_me.exception.ConflictException;
 import ru.yandex.practicum.explore_with_me.feature.event.mapper.EventMapper;
 import ru.yandex.practicum.explore_with_me.feature.event.model.Event;
 import ru.yandex.practicum.explore_with_me.feature.event.model.EventState;
@@ -15,6 +17,7 @@ import ru.yandex.practicum.explore_with_me.feature.event.repository.EventReposit
 import ru.yandex.practicum.explore_with_me.feature.user.model.User;
 import ru.yandex.practicum.explore_with_me.feature.user.service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +46,31 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found: " + eventId));
 
+        // Обработка
         eventMapper.updateFromAdminRequest(updateRequest, event);
+        switch (updateRequest.getStateAction()) {
+
+            case PUBLISH_EVENT:
+                if (event.getState() == EventState.PUBLISHED) {
+                    throw new ConflictException();
+                }
+                event.setState(EventState.PUBLISHED);
+                event.setPublishedOn(LocalDateTime.now());
+                break;
+
+            case REJECT_EVENT:
+                if (event.getState() == EventState.PUBLISHED) {
+                    throw new ConflictException(Config.EVENT_PUBLISH_CONFLICT_EXCEPTION_MESSAGE);
+                }
+                event.setState(EventState.CANCELED);
+                // publishedOn можно очистить или не трогать
+                break;
+            }
+
+
+        Event updated = eventRepository.save(event);
+        return eventMapper.toFullDto(updated);
+    }
         Event updated = eventRepository.save(event);
         return eventMapper.toFullDto(updated);
     }
