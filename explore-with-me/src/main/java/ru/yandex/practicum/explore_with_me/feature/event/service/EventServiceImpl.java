@@ -3,12 +3,10 @@ package ru.yandex.practicum.explore_with_me.feature.event.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.explore_with_me.feature.category.model.Category;
-import ru.yandex.practicum.explore_with_me.feature.category.repository.CategoryRepository;
-import ru.yandex.practicum.explore_with_me.feature.event.dto.EventFullDto;
-import ru.yandex.practicum.explore_with_me.feature.event.dto.NewEventDto;
 import ru.yandex.practicum.explore_with_me.config.Config;
 import ru.yandex.practicum.explore_with_me.exception.ConflictException;
+import ru.yandex.practicum.explore_with_me.exception.NotFoundException;
+import ru.yandex.practicum.explore_with_me.feature.event.dto.*;
 import ru.yandex.practicum.explore_with_me.feature.event.mapper.EventMapper;
 import ru.yandex.practicum.explore_with_me.feature.event.model.Event;
 import ru.yandex.practicum.explore_with_me.feature.event.model.EventState;
@@ -71,6 +69,18 @@ public class EventServiceImpl implements EventService {
         Event updated = eventRepository.save(event);
         return eventMapper.toFullDto(updated);
     }
+
+    @Override
+    public EventFullDto updateEventByUser(Long userId, Long eventId, UpdateEventUserRequest updateRequest) {
+        Event event = eventRepository.findByIdAndInitiatorId(eventId, userId)
+                .orElseThrow(() -> new NotFoundException(eventId));
+
+        // Обработка
+        if (event.getState() != EventState.PENDING) { // Изменять можно только PENDING-Event'ы
+            throw new ConflictException();
+        }
+        eventMapper.updateFromUserRequest(updateRequest, event);
+
         Event updated = eventRepository.save(event);
         return eventMapper.toFullDto(updated);
     }
