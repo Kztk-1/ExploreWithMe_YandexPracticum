@@ -45,14 +45,14 @@ public abstract class EventMapper {
     public abstract Event fromNewEventDto(NewEventDto eventDto);
 
     @BeanMapping(
-            ignoreByDefault = true,
+//            ignoreByDefault = true,
             nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
     )
     public abstract Event updateFromUserRequest(UpdateEventUserRequest dto,
                                                 @MappingTarget Event event);
 
     @BeanMapping(
-            ignoreByDefault = true,
+//            ignoreByDefault = true,
             nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
     )
     public abstract Event updateFromAdminRequest(UpdateEventAdminRequest dto,
