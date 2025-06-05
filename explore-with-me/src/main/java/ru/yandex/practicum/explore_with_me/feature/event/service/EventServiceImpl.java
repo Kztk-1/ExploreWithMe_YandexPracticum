@@ -31,7 +31,8 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventFullDto> getEventsAdmin(List<Long> users, List<EventState> states, List<Long> categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable pageable) {
         // TODO: build specification or criteria query based on filters
-        List<Event> events = findAllByAdminFilters(users, states, categories, rangeStart, rangeEnd, pageable);
+        List<Event> events = eventRepository.findAllByAdminFilters(users, states, categories, rangeStart, rangeEnd, pageable)
+                .toList();
         return events.stream()
                 .map(eventMapper::toFullDto)
                 .collect(Collectors.toList());
@@ -50,11 +51,12 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventShortDto> getPublicEvents(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, Pageable pageable) {
         // TODO: implement filtering, availability and sorting
-        List<Event> events = eventRepository.findPublic(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, pageable);
         return events.stream()
                 .map(eventMapper::toShortDto)
                 .collect(Collectors.toList());
     public List<EventShortDto> getPublicEvents(String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd, Boolean onlyAvailable, SortType sort, Pageable pageable) {
+        List<Event> events = eventRepository.findPublic(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, pageable)
+                .toList();
     }
 
     @Override
