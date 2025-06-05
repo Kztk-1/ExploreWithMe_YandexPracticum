@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.yandex.practicum.explore_with_me.feature.category.dto.CategoryDto;
 import ru.yandex.practicum.explore_with_me.feature.category.model.Category;
 import ru.yandex.practicum.explore_with_me.feature.event.model.Location;
 import ru.yandex.practicum.explore_with_me.feature.user.dto.UserShortDto;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class EventFullDto {
     private String annotation;
-    private Category category;
+    private CategoryDto category;
     private Integer confirmedRequests;
     private LocalDateTime createdOn;
     private String description;
