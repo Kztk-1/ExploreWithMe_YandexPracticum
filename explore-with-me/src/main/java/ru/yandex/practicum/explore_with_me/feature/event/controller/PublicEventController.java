@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.explore_with_me.feature.event.dto.EventFullDto;
 import ru.yandex.practicum.explore_with_me.feature.event.dto.EventShortDto;
@@ -18,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/events")
 @RequiredArgsConstructor
+@Validated
 public class PublicEventController {
 
     private final EventService eventService; // Предполагается наличие сервиса
@@ -34,7 +36,7 @@ public class PublicEventController {
             @RequestParam(defaultValue = "0") @Min(0) int from,
             @RequestParam(defaultValue = "10") @Min(1) int size) {
 
-        int page = (from != 0) ? (size / from) : 0;
+        int page = (from > 0) ? from / size : 0;
         Pageable pageable = PageRequest.of(page, size);
 
         List<EventShortDto> events = eventService.getPublicEvents(
@@ -45,13 +47,11 @@ public class PublicEventController {
     }
 
     @GetMapping("/{id}")
-    public List<EventShortDto> getEventById(@PathVariable Long userId,
+    public List<EventShortDto> getEventById(@PathVariable Long id,
                                       @RequestParam(defaultValue = "0") @Min(0) int from,
                                       @RequestParam(defaultValue = "10") @Min(1) int size) {
-
-        int page = size / from;
-        Pageable pageable = PageRequest.of(page, size);
-        List<EventShortDto> events = eventService.getEventsByUserId(userId, pageable);
+        int page = from == 0 ? 0 : size / from;
+        List<EventShortDto> events = List.of(eventService.getEventById(id));
         return events;
     }
 

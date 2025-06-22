@@ -46,7 +46,7 @@ public interface EventService {
     /**
      * Публично: получение события по ID
      */
-    EventFullDto getEventById(
+    EventShortDto getEventById(
             Long eventId
     );
 
