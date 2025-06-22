@@ -128,10 +128,10 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventFullDto getEventById(Long eventId) {
+    public EventShortDto getEventById(Long eventId) {
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new NotFoundException("Event not found: " + eventId));
-        return eventMapper.toFullDto(event);
+                .orElseThrow(() -> new NotFoundException(String.format(Config.NOT_FOUND_EXCEPTION, eventId)));
+        return eventMapper.toShortDto(event);
     }
 
     @Override
