@@ -8,11 +8,6 @@ import ru.yandex.practicum.explore_with_me.feature.user.model.User;
 import java.time.LocalDateTime;
 
 
-/*
-    Указывать
-        1) initiator
-        2) state
- */
 @Data
 @Entity
 @Table(name = "events")
