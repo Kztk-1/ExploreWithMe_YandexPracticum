@@ -10,5 +10,8 @@ public class Config {
     public static final String CONFLICT_EXCEPTION_MESSAGE = "Conflict";
 
     public static final String CATEGORY_NOTFOUND_EXCEPTION_MESSAGE = "Category with id=%d not found";
+    public static final String EVENT_NOTFOUND_EXCEPTION_MESSAGE = "Event with id=%d not found";
+
+    public static final String EVENT_PUBLISH_CONFLICT_EXCEPTION_MESSAGE = "Cannot publish the event because it's not in the right state: PUBLISHED";
 
 }

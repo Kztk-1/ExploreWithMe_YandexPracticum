@@ -17,7 +17,7 @@ import ru.yandex.practicum.explore_with_me.feature.event.model.EventState;
 import ru.yandex.practicum.explore_with_me.feature.event.model.SortType;
 import ru.yandex.practicum.explore_with_me.feature.event.repository.EventRepository;
 import ru.yandex.practicum.explore_with_me.feature.user.model.User;
-import ru.yandex.practicum.explore_with_me.feature.user.service.UserService;
+import ru.yandex.practicum.explore_with_me.feature.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
-    private final CategoryRepository categoryRepository;
     private final EventMapper eventMapper;
     private final UserRepository userRepository;
 

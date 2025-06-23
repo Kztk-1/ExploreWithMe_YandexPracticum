@@ -30,8 +30,6 @@ public abstract class EventMapper {
     @Autowired
     protected CategoryRepository categoryRepository;
 
-    EventMapper INSTANCE = Mappers.getMapper(EventMapper.class);
-
     public abstract EventFullDto toFullDto(Event event);
 
     @Mapping(target = "id", ignore = true)

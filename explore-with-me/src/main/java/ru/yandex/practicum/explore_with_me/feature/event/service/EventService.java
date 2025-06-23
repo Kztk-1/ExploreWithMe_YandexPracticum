@@ -3,6 +3,7 @@ package ru.yandex.practicum.explore_with_me.feature.event.service;
 import org.springframework.data.domain.Pageable;
 import ru.yandex.practicum.explore_with_me.feature.event.dto.*;
 import ru.yandex.practicum.explore_with_me.feature.event.model.EventState;
+import ru.yandex.practicum.explore_with_me.feature.event.model.SortType;
 
 import java.time.LocalDateTime;
 import java.util.List;

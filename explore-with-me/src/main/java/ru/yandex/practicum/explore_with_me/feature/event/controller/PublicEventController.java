@@ -55,5 +55,4 @@ public class PublicEventController {
         return events;
     }
 
-
 }
