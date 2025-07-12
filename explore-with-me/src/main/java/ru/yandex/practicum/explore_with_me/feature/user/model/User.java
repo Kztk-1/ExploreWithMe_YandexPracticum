@@ -3,8 +3,10 @@ package ru.yandex.practicum.explore_with_me.feature.user.model;
 import jakarta.persistence.*;
 import lombok.*;
 import ru.yandex.practicum.explore_with_me.config.Config;
+import ru.yandex.practicum.explore_with_me.feature.event.model.Event;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Table(name = "users")
 @NoArgsConstructor
@@ -25,6 +27,13 @@ public class User {
 
     @Column(name = "registration_date", nullable = false)
     private LocalDateTime registrationDate;
+
+    @OneToMany(
+            mappedBy = "initiator",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Event> events;
 
     @PrePersist
     protected void onCreate() {
