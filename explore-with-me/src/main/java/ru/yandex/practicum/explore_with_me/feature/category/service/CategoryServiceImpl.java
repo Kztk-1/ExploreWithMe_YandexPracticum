@@ -1,6 +1,7 @@
 package ru.yandex.practicum.explore_with_me.feature.category.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,18 +9,23 @@ import ru.yandex.practicum.explore_with_me.exception.NotFoundException;
 import ru.yandex.practicum.explore_with_me.feature.category.dto.CategoryDto;
 import ru.yandex.practicum.explore_with_me.feature.category.dto.NewCategoryDto;
 import ru.yandex.practicum.explore_with_me.feature.category.dto.UpdateCategoryDto;
+import ru.yandex.practicum.explore_with_me.feature.category.exception.CategoryAlreadyUsed;
 import ru.yandex.practicum.explore_with_me.feature.category.mapper.CategoryMapper;
 import ru.yandex.practicum.explore_with_me.feature.category.model.Category;
 import ru.yandex.practicum.explore_with_me.feature.category.repository.CategoryRepository;
+import ru.yandex.practicum.explore_with_me.feature.event.repository.EventRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final EventRepository eventRepository;
+
     private final CategoryMapper categoryMapper;
 
     // Public
@@ -58,8 +64,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public void deleteCategory(Long catId) {
         Integer id = catId.intValue();
+
         if (!categoryRepository.existsById(id)) {
             throw new NotFoundException(String.format("Category with id=%d not found", catId));
+        }
+        // проверяем, используется ли категория в каком-нибудь Event
+        if (eventRepository.existsByCategory_Id(catId)) {
+            log.info(categoryRepository.getReferenceById(id).getName());
+            throw new CategoryAlreadyUsed(id);
         }
         categoryRepository.deleteById(id);
     }

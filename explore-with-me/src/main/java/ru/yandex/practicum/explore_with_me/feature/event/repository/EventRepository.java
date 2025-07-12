@@ -66,4 +66,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
             @Param("onlyAvailable") Boolean onlyAvailable,
             Pageable pageable
     );
+
+    boolean existsByCategory_Id(Long categoryId);
 }
