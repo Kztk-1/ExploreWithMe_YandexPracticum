@@ -2,6 +2,7 @@ package ru.yandex.practicum.explore_with_me.exception.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,10 +12,9 @@ import org.springframework.web.method.annotation.HandlerMethodValidationExceptio
 import ru.yandex.practicum.explore_with_me.exception.ConflictException;
 import ru.yandex.practicum.explore_with_me.exception.NotFoundException;
 
-import java.time.LocalDateTime;
-
+@Order(2)
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends ExceptionHandlerAbstract {
 
 
     @ExceptionHandler(NotFoundException.class)
@@ -65,14 +65,4 @@ public class GlobalExceptionHandler {
         );
     }
 
-    private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, String message, String path) {
-        ErrorResponse body = new ErrorResponse(
-                LocalDateTime.now(),
-                status.value(),
-                status.getReasonPhrase(),
-                message,
-                path
-        );
-        return ResponseEntity.status(status).body(body);
-    }
 }
