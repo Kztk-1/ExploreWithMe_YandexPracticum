@@ -12,7 +12,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.explore_with_me.config.Config;
 import ru.yandex.practicum.explore_with_me.feature.event.dto.UpdateEventAdminRequest;
-import ru.yandex.practicum.explore_with_me.feature.event.model.StateAction;
+import ru.yandex.practicum.explore_with_me.feature.event.model.AdminStateAction;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -87,7 +87,7 @@ class AdminEventControllerIntegrationTest {
     @Test
     void updateEventAdmin_shouldPublishEvent() throws Exception {
         UpdateEventAdminRequest updateRequest = new UpdateEventAdminRequest();
-        updateRequest.setStateAction(StateAction.PUBLISH_EVENT);
+        updateRequest.setStateAction(AdminStateAction.PUBLISH_EVENT);
 
         // Событие id=2 изначально в состоянии PENDING
         mockMvc.perform(patch("/admin/events/{eventId}", 2)
@@ -101,7 +101,7 @@ class AdminEventControllerIntegrationTest {
     @Test
     void updateEventAdmin_shouldRejectEvent() throws Exception {
         UpdateEventAdminRequest updateRequest = new UpdateEventAdminRequest();
-        updateRequest.setStateAction(StateAction.REJECT_EVENT);
+        updateRequest.setStateAction(AdminStateAction.REJECT_EVENT);
 
         // Попытка отклонить уже опубликованное событие id=1
         mockMvc.perform(patch("/admin/events/{eventId}", 1)
