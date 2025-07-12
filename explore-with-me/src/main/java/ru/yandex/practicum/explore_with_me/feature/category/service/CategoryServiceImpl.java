@@ -2,9 +2,11 @@ package ru.yandex.practicum.explore_with_me.feature.category.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.practicum.explore_with_me.exception.ConflictException;
 import ru.yandex.practicum.explore_with_me.exception.NotFoundException;
 import ru.yandex.practicum.explore_with_me.feature.category.dto.CategoryDto;
 import ru.yandex.practicum.explore_with_me.feature.category.dto.NewCategoryDto;
@@ -57,7 +59,11 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto addCategory(NewCategoryDto dto) {
         Category category = new Category();
         category.setName(dto.getName());
-        return categoryMapper.toDto(categoryRepository.save(category));
+        try {
+            return categoryMapper.toDto(categoryRepository.save(category));
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException();
+        }
     }
 
     @Override
