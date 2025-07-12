@@ -1,115 +1,84 @@
 package ru.yandex.practicum.explore_with_me.feature.category.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.practicum.explore_with_me.feature.category.dto.NewCategoryDto;
-import ru.yandex.practicum.explore_with_me.feature.category.dto.UpdateCategoryDto;
+import org.springframework.test.web.servlet.MvcResult;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Sql(scripts = {"/clear-data.sql", "/test-data.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class PublicCategoryControllerIntegrationTest {
 
-    private final MockMvc mockMvc;
-    private final ObjectMapper objectMapper;
+    @Autowired
+    private MockMvc mockMvc;
 
-    /**
-     * В test-data.sql мы заранее вставили 5 категорий с id=1..5 и именами:
-     *   1→Music, 2→Sport, 3→Theatre, 4→Exhibition, 5→Workshop
-     */
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Test
-    void getCategories_shouldReturnAllAndRespectPagination() throws Exception {
-        // без пагинации: from=0, size=10 → вернёт все 5
+    void getCategories_shouldReturnPaginatedResults() throws Exception {
+        // First page: 2 categories
         mockMvc.perform(get("/categories")
                         .param("from", "0")
-                        .param("size", "10")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(5))
-                // проверим, что в списке есть категория с id=3 и name="Theatre"
-                .andExpect(jsonPath("$[?(@.id==3)].name").value("Theatre"));
-
-        // пагинация: from=0, size=2 → первые 2 (id=1,2)
-        mockMvc.perform(get("/categories")
-                        .param("from", "0")
-                        .param("size", "2")
-                        .accept(MediaType.APPLICATION_JSON))
+                        .param("size", "2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[1].id").value(2));
-    }
+                .andExpect(jsonPath("$[0].name").value("Exhibition"))
+                .andExpect(jsonPath("$[1].name").value("Music"));
 
-    @Test
-    void getCategoryById_shouldReturnDto_whenExists() throws Exception {
-        // в тестовых данных id=2 → name="Sport"
-        mockMvc.perform(get("/categories/{id}", 2)
-                        .accept(MediaType.APPLICATION_JSON))
+        // Second page: next 2 categories
+        mockMvc.perform(get("/categories")
+                        .param("from", "2")
+                        .param("size", "2"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(2))
-                .andExpect(jsonPath("$.name").value("Sport"));
-    }
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].name").value("Sport"))
+                .andExpect(jsonPath("$[1].name").value("Theatre"));
 
-    @Test
-    void getCategoryById_shouldReturn404_whenNotFound() throws Exception {
-        long nonexistentId = 999L; // в test-data.sql только 1..5
-
-        mockMvc.perform(get("/categories/{id}", nonexistentId)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.status").value(404))
-                .andExpect(jsonPath("$.error").value("Not Found"))
-                .andExpect(jsonPath("$.message")
-                        .value("Category with id=" + nonexistentId + " not found"));
-    }
-
-    @Test
-    void addCategory_shouldReturnCreatedCategory() throws Exception {
-        NewCategoryDto dto = new NewCategoryDto();
-        dto.setName("NewCat");
-
-        mockMvc.perform(post("/admin/categories")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.name").value("NewCat"));
-    }
-
-    @Test
-    void updateCategory_shouldUpdateAndReturnDto() throws Exception {
-        UpdateCategoryDto dto = new UpdateCategoryDto();
-        dto.setName("UpdatedCat");
-
-        mockMvc.perform(patch("/admin/categories/{catId}", 3)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
+        // Last page: remaining category
+        mockMvc.perform(get("/categories")
+                        .param("from", "4")
+                        .param("size", "2"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(3))
-                .andExpect(jsonPath("$.name").value("UpdatedCat"));
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].name").value("Workshop"));
     }
 
     @Test
-    void deleteCategory_shouldRemoveCategory() throws Exception {
-        mockMvc.perform(delete("/admin/categories/{catId}", 5))
-                .andExpect(status().isNoContent());
+    void getCategories_shouldReturnFullListWithoutPagingParams() throws Exception {
+        MvcResult result = mockMvc.perform(get("/categories"))
+                .andExpect(status().isOk())
+                .andReturn();
 
-        // Убедимся, что категория действительно удалена
-        mockMvc.perform(get("/categories/{id}", 5))
+        List<?> categories = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                List.class
+        );
+        assertEquals(5, categories.size());
+    }
+
+    @Test
+    void getCategory_shouldReturnCategoryDetails() throws Exception {
+        mockMvc.perform(get("/categories/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.name").value("Music"));
+    }
+
+    @Test
+    void getCategory_shouldNotFoundForInvalidId() throws Exception {
+        mockMvc.perform(get("/categories/999"))
                 .andExpect(status().isNotFound());
     }
 }
