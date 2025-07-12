@@ -3,14 +3,18 @@ package ru.yandex.practicum.explore_with_me.feature.user.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.yandex.practicum.explore_with_me.config.Config;
 
 import java.time.LocalDateTime;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDto {
 
     private Long id;
@@ -25,5 +29,13 @@ public class UserDto {
     private String email;
 
     private LocalDateTime registrationDate;
-}
 
+    /**
+     * Constructor for tests: id, email, name
+     */
+    public UserDto(Long id, String email, String name) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+}

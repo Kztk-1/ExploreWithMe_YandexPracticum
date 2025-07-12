@@ -1,7 +1,10 @@
 package ru.yandex.practicum.explore_with_me.feature.event.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.yandex.practicum.explore_with_me.feature.category.model.Category;
 import ru.yandex.practicum.explore_with_me.feature.user.model.User;
 
@@ -10,6 +13,9 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
+@Builder(toBuilder = true) // toBuilder для тестов
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "events")
 public class Event {
 
