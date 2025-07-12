@@ -39,7 +39,17 @@ public class Event {
     private Location location;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(
+            name = "category_id",
+            nullable = true,
+            foreignKey = @ForeignKey(
+                    name = "fk_event_category",
+                    foreignKeyDefinition =
+                            "FOREIGN KEY (category_id) " +
+                                    "REFERENCES category(id) " +
+                                    "ON DELETE SET NULL"
+            )
+    )
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
